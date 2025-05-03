@@ -89,7 +89,8 @@ def vis_rapport(report_id):
     cur.execute("SELECT time, description, image FROM entries WHERE report_id=?", (report_id,))
     entries = cur.fetchall()
     conn.close()
-    return render_template('rapport.html', report=report, entries=entries)
+    return render_template('rapport.html', report=report, entries=entries, report_id=report_id)
+
 
 from flask import send_file
 from io import BytesIO
