@@ -8,20 +8,33 @@
 <body class="p-4 bg-light">
     <div class="container">
         <h1 class="mb-3">📝 Rapport</h1>
+
+        <!-- Tilbage og PDF-knapper -->
         <div class="d-flex justify-content-between mb-3">
             <a href="/rapporter" class="btn btn-secondary">⬅️ Tilbage til oversigt</a>
             <a href="/rapport/{{ report_id }}/pdf" class="btn btn-danger">📄 Download som PDF</a>
         </div>
 
-        <!-- Dette var manglende: viser sted, opgave og tidspunkt -->
+        <!-- E-mailformular -->
+        <form method="post" action="/rapport/{{ report_id }}/send">
+            <div class="input-group mb-4">
+                <input type="email" name="email" class="form-control" placeholder="Modtagerens e-mail" required>
+                <button type="submit" class="btn btn-success">📧 Send som PDF</button>
+            </div>
+        </form>
+
+        <!-- Rapportdata -->
         <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title">{{ report[2] }}</h5>
-                <p class="card-text"><strong>Sted:</strong> {{ report[1] }}<br>
-                <strong>Oprettet:</strong> {{ report[0][:16].replace("T", " ") }}</p>
+                <p class="card-text">
+                    <strong>Sted:</strong> {{ report[1] }}<br>
+                    <strong>Oprettet:</strong> {{ report[0][:16].replace("T", " ") }}
+                </p>
             </div>
         </div>
 
+        <!-- Hændelser -->
         <h4>📌 Hændelsesforløb</h4>
         {% for time, description, image in entries %}
         <div class="card mb-2">

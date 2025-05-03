@@ -1,9 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 import os
+import sqlite3
 from werkzeug.utils import secure_filename
 from datetime import datetime
-import sqlite3
+from io import BytesIO
+from fpdf import FPDF
+import smtplib
+from email.message import EmailMessage
 
+# Konfiguration
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -11,40 +16,41 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 DATABASE = os.path.join(os.path.dirname(__file__), 'reports.db')
 
-# Opret databasen hvis den ikke findes
+# Opret database hvis den ikke findes
 def init_db():
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
     cur.execute('''
-    CREATE TABLE IF NOT EXISTS reports (
-        id INTEGER PRIMARY KEY,
-        timestamp TEXT,
-        location TEXT,
-        subject TEXT
-    )''')
+        CREATE TABLE IF NOT EXISTS reports (
+            id INTEGER PRIMARY KEY,
+            timestamp TEXT,
+            location TEXT,
+            subject TEXT
+        )''')
     cur.execute('''
-    CREATE TABLE IF NOT EXISTS entries (
-        id INTEGER PRIMARY KEY,
-        report_id INTEGER,
-        time TEXT,
-        description TEXT,
-        image TEXT,
-        FOREIGN KEY(report_id) REFERENCES reports(id)
-    )''')
+        CREATE TABLE IF NOT EXISTS entries (
+            id INTEGER PRIMARY KEY,
+            report_id INTEGER,
+            time TEXT,
+            description TEXT,
+            image TEXT,
+            FOREIGN KEY(report_id) REFERENCES reports(id)
+        )''')
     conn.commit()
     conn.close()
 
-# Tjek om billede må uploades
+# Tjek filtype
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Forside – indtast rapport
+# Forside – opret rapport
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         location = request.form['location']
         subject = request.form['subject']
         timestamp = datetime.now().isoformat()
+
         conn = sqlite3.connect(DATABASE)
         cur = conn.cursor()
         cur.execute("INSERT INTO reports(timestamp, location, subject) VALUES (?, ?, ?)",
@@ -66,10 +72,11 @@ def index():
         conn.commit()
         conn.close()
         return redirect(url_for('rapporter'))
+
     init_db()
     return render_template('index.html')
 
-# Vis alle rapporter
+# Oversigt over rapporter
 @app.route('/rapporter')
 def rapporter():
     conn = sqlite3.connect(DATABASE)
@@ -79,7 +86,7 @@ def rapporter():
     conn.close()
     return render_template('rapporter.html', reports=reports)
 
-# Vis detaljer for én rapport
+# Vis enkelt rapport
 @app.route('/rapport/<int:report_id>')
 def vis_rapport(report_id):
     conn = sqlite3.connect(DATABASE)
@@ -91,11 +98,7 @@ def vis_rapport(report_id):
     conn.close()
     return render_template('rapport.html', report=report, entries=entries, report_id=report_id)
 
-
-from flask import send_file
-from io import BytesIO
-from fpdf import FPDF
-
+# Download som PDF
 @app.route('/rapport/<int:report_id>/pdf')
 def download_pdf(report_id):
     conn = sqlite3.connect(DATABASE)
@@ -119,14 +122,4 @@ def download_pdf(report_id):
     pdf.cell(200, 10, txt="Hændelsesforløb:", ln=True)
     pdf.set_font("Arial", size=11)
 
-    for time, desc in entries:
-        pdf.multi_cell(0, 8, txt=f"{time} - {desc}", align='L')
-        pdf.ln(1)
-
-    buffer = BytesIO()
-    pdf.output(buffer)
-    buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name='rapport.pdf', mimetype='application/pdf')
-if __name__ == '__main__':
-    init_db()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    for time, desc in
