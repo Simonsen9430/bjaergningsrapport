@@ -91,6 +91,41 @@ def vis_rapport(report_id):
     conn.close()
     return render_template('rapport.html', report=report, entries=entries)
 
+from flask import send_file
+from io import BytesIO
+from fpdf import FPDF
+
+@app.route('/rapport/<int:report_id>/pdf')
+def download_pdf(report_id):
+    conn = sqlite3.connect(DATABASE)
+    cur = conn.cursor()
+    cur.execute("SELECT timestamp, location, subject FROM reports WHERE id=?", (report_id,))
+    report = cur.fetchone()
+    cur.execute("SELECT time, description FROM entries WHERE report_id=?", (report_id,))
+    entries = cur.fetchall()
+    conn.close()
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="Bjærgningsrapport", ln=True, align='C')
+    pdf.ln(10)
+    pdf.cell(200, 10, txt=f"Sted: {report[1]}", ln=True)
+    pdf.cell(200, 10, txt=f"Opgave: {report[2]}", ln=True)
+    pdf.cell(200, 10, txt=f"Dato: {report[0][:16].replace('T', ' ')}", ln=True)
+    pdf.ln(10)
+    pdf.set_font("Arial", style='B', size=12)
+    pdf.cell(200, 10, txt="Hændelsesforløb:", ln=True)
+    pdf.set_font("Arial", size=11)
+
+    for time, desc in entries:
+        pdf.multi_cell(0, 8, txt=f"{time} - {desc}", align='L')
+        pdf.ln(1)
+
+    buffer = BytesIO()
+    pdf.output(buffer)
+    buffer.seek(0)
+    return send_file(buffer, as_attachment=True, download_name='rapport.pdf', mimetype='application/pdf')
 if __name__ == '__main__':
     init_db()
     app.run(host="0.0.0.0", port=5000, debug=True)
