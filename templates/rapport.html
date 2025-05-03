@@ -13,6 +13,13 @@
             <a href="/rapport/{{ report_id }}/pdf" class="btn btn-danger">📄 Download som PDF</a>
         </div>
 
+        <!-- Dette var manglende: viser sted, opgave og tidspunkt -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ report[2] }}</h5>
+                <p class="card-text"><strong>Sted:</strong> {{ report[1] }}<br>
+                <strong>Oprettet:</strong> {{ report[0][:16].replace("T", " ") }}</p>
+            </div>
         </div>
 
         <h4>📌 Hændelsesforløb</h4>
