@@ -8,15 +8,11 @@
 <body class="p-4 bg-light">
     <div class="container">
         <h1 class="mb-3">📝 Rapport</h1>
-        <a href="/rapporter" class="btn btn-secondary mb-3">⬅️ Tilbage</a>
-        <a href="/rapport/{{ report_id }}/pdf" class="btn btn-danger mb-3">📄 Download som PDF</a>
+        <div class="d-flex justify-content-between mb-3">
+            <a href="/rapporter" class="btn btn-secondary">⬅️ Tilbage til oversigt</a>
+            <a href="/rapport/{{ report_id }}/pdf" class="btn btn-danger">📄 Download som PDF</a>
+        </div>
 
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">{{ report[2] }}</h5>
-                <p class="card-text"><strong>Sted:</strong> {{ report[1] }}<br>
-                <strong>Oprettet:</strong> {{ report[0][:16].replace("T", " ") }}</p>
-            </div>
         </div>
 
         <h4>📌 Hændelsesforløb</h4>
