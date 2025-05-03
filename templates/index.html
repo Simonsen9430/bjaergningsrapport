@@ -9,7 +9,7 @@
         function addEntryRow() {
             const container = document.getElementById("entries");
             const row = document.createElement("div");
-            row.className = "row mb-3";
+            row.className = "row mb-3 align-items-end";
 
             row.innerHTML = `
                 <div class="col-md-3 mb-2">
@@ -18,8 +18,11 @@
                 <div class="col-md-5 mb-2">
                     <input type="text" name="entry_desc" class="form-control" placeholder="Beskrivelse" required>
                 </div>
-                <div class="col-md-4 mb-2">
+                <div class="col-md-3 mb-2">
                     <input type="file" name="entry_image" class="form-control">
+                </div>
+                <div class="col-md-1 mb-2 text-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.row').remove()">🗑</button>
                 </div>
             `;
             container.appendChild(row);
@@ -45,15 +48,18 @@
             <h4 class="mb-3">2. Hændelsesforløb</h4>
 
             <div id="entries">
-                <div class="row mb-3">
+                <div class="row mb-3 align-items-end">
                     <div class="col-md-3 mb-2">
                         <input type="time" name="entry_time" class="form-control" required>
                     </div>
                     <div class="col-md-5 mb-2">
                         <input type="text" name="entry_desc" class="form-control" placeholder="Beskrivelse" required>
                     </div>
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-3 mb-2">
                         <input type="file" name="entry_image" class="form-control">
+                    </div>
+                    <div class="col-md-1 mb-2 text-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.row').remove()">🗑</button>
                     </div>
                 </div>
             </div>
