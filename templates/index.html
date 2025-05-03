@@ -1,1 +1,67 @@
-<h1>Formularen indsættes her</h1>
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Bjærgningsrapport – Live Indtastning</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function addEntryRow() {
+            const container = document.getElementById("entries");
+            const row = document.createElement("div");
+            row.className = "row mb-3";
+
+            row.innerHTML = `
+                <div class="col-md-3 mb-2">
+                    <input type="time" name="entry_time" class="form-control" required>
+                </div>
+                <div class="col-md-5 mb-2">
+                    <input type="text" name="entry_desc" class="form-control" placeholder="Beskrivelse" required>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <input type="file" name="entry_image" class="form-control">
+                </div>
+            `;
+            container.appendChild(row);
+        }
+    </script>
+</head>
+<body class="p-4 bg-light">
+    <div class="container">
+        <h1 class="mb-4">🚨 Bjærgningsrapport – Live Indtastning</h1>
+        <a href="/rapporter" class="btn btn-outline-primary mb-4">📋 Se tidligere rapporter</a>
+
+        <form method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">📍 Sted:</label>
+                <input type="text" name="location" class="form-control" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">📝 Beskrivelse af opgave:</label>
+                <input type="text" name="subject" class="form-control" required>
+            </div>
+
+            <h4 class="mb-3">2. Hændelsesforløb</h4>
+
+            <div id="entries">
+                <div class="row mb-3">
+                    <div class="col-md-3 mb-2">
+                        <input type="time" name="entry_time" class="form-control" required>
+                    </div>
+                    <div class="col-md-5 mb-2">
+                        <input type="text" name="entry_desc" class="form-control" placeholder="Beskrivelse" required>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <input type="file" name="entry_image" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" onclick="addEntryRow()" class="btn btn-secondary mb-3">➕ Tilføj hændelse</button>
+            <br>
+            <button type="submit" class="btn btn-success">✅ Gem rapport</button>
+        </form>
+    </div>
+</body>
+</html>
