@@ -65,7 +65,7 @@ def index():
 
         conn.commit()
         conn.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('rapporter'))
     init_db()
     return render_template('index.html')
 
